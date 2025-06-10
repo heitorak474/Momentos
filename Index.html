@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Momentos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    body {
+      background-color: #1c1c1c;
+      color: #fff;
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+    h1 {
+      font-family: 'Great Vibes', cursive;
+      color: #b11226;
+      font-size: 60px;
+      margin-bottom: 10px;
+    }
+    nav a {
+      color: #fff;
+      margin: 0 10px;
+      text-decoration: none;
+      padding: 5px 10px;
+      background-color: #b11226;
+      border-radius: 8px;
+    }
+    nav a:hover {
+      background-color: #8b0e1d;
+    }
+    section { display: none; padding: 20px; }
+    section.active { display: block; }
+    textarea { width: 80%; height: 100px; margin: 15px 0; }
+    .upload-label { background-color: #b11226; padding: 8px 15px; border-radius: 8px; color: #fff; cursor: pointer; }
+    .upload-label:hover { background-color: #8b0e1d; }
+    img { max-width: 300px; margin: 10px; }
+    audio { margin: 10px; }
+    #qrcode { margin: 20px auto; }
+
+    /* Animação de corações */
+    .heart {
+      position: fixed; width: 20px; height: 20px; background: #b11226;
+      transform: rotate(45deg); animation: floatUp 6s linear infinite;
+    }
+    .heart:after, .heart:before {
+      content: ""; position: absolute; width: 20px; height: 20px;
+      background: #b11226; border-radius: 50%; top: -10px; left: 0;
+    }
+    .heart:before { left: 10px; }
+    @keyframes floatUp {
+      0% { bottom: -30px; opacity: 1; transform: scale(0.5) rotate(45deg);}
+      100% { bottom: 100vh; opacity: 0; transform: scale(1.5) rotate(45deg);}
+    }
+
+    /* Animação de cupidos */
+    .cupido {
+      position: fixed; top: 50%; left: -100px;
+      width: 50px; height: 50px; background-image: url('https://cdn-icons-png.flaticon.com/512/2583/2583687.png');
+      background-size: contain; background-repeat: no-repeat;
+      animation: flyAcross 10s linear infinite;
+    }
+    @keyframes flyAcross {
+      0% { left: -100px; top: 30%;}
+      50% { left: 100vw; top: 50%;}
+      100% { left: -100px; top: 70%;}
+    }
+  </style>
+</head>
+<body>
+  <h1>Momentos</h1>
+  <nav>
+    <a href="#" onclick="showPage('home')">Home</a>
+    <a href="#" onclick="showPage('galeria')">Galeria</a>
+    <a href="#" onclick="showPage('musica')">Músicas</a>
+    <a href="#" onclick="showPage('sobre')">Sobre</a>
+  </nav>
+
+  <section id="home" class="active">
+    <h3>Bem-vindo ao Momentos!</h3>
+    <p>Um espaço para guardar textos, fotos e músicas especiais.</p>
+    <div id="qrcode"></div>
+  </section>
+
+  <section id="galeria">
+    <h3>Adicione uma foto:</h3>
+    <label class="upload-label">
+      Escolher Foto<input type="file" id="photoInput" accept="image/*" onchange="addPhoto()" style="display:none;">
+    </label>
+    <div id="photoArea"></div>
+  </section>
+
+  <section id="musica">
+    <h3>Adicione sua música:</h3>
+    <label class="upload-label">
+      Escolher Música<input type="file" id="musicInput" accept="audio/*" onchange="addMusic()" style="display:none;">
+    </label>
+    <div id="musicArea"></div>
+  </section>
+
+  <section id="sobre">
+    <h3>Escreva algo especial:</h3>
+    <textarea id="textInput" placeholder="Digite aqui..."></textarea><br>
+    <button onclick="addText()">Adicionar Texto</button>
+    <div id="textArea"></div>
+  </section>
+
+  <!-- Música de fundo automática -->
+  <audio autoplay loop>
+    <source src="https://www.youtube.com/watch?v=8-8nkkOA_AM" type="audio/mp3">
+    Seu navegador não suporta áudio automático.
+  </audio>
+
+  <!-- Animações -->
+  <script>
+    // QR Code funcional (Exemplo: GitHub Pages - substituir pelo seu link quando publicado)
+    new QRCode(document.getElementById('qrcode'), {
+      text: 'https://SEU-LINK-AQUI.github.io/momentos', // Substitua por seu link real
+      width: 128, height: 128,
+      colorDark: '#b11226',
+      colorLight: '#1c1c1c',
+      correctLevel: QRCode.CorrectLevel.H
+    });
+
+    // Navegação entre páginas
+    function showPage(page) {
+      document.querySelectorAll('section').forEach(sec => sec.classList.remove('active'));
+      document.getElementById(page).classList.add('active');
+    }
+
+    // Funções de conteúdo
+    function addText() {
+      const t = document.getElementById('textInput').value;
+      if(t){
+        const p = document.createElement('p'); p.textContent = t;
+        document.getElementById('textArea').appendChild(p);
+      }
+    }
+    function addPhoto() {
+      const f = document.getElementById('photoInput').files[0];
+      const r = new FileReader();
+      r.onload = e => {
+        const img = document.createElement('img'); img.src = e.target.result;
+        document.getElementById('photoArea').appendChild(img);
+      }
+      r.readAsDataURL(f);
+    }
+    function addMusic() {
+      const f = document.getElementById('musicInput').files[0];
+      const r = new FileReader();
+      r.onload = e => {
+        const a = document.createElement('audio'); a.controls = true; a.src = e.target.result;
+        document.getElementById('musicArea').appendChild(a);
+      }
+      r.readAsDataURL(f);
+    }
+
+    // Corações flutuantes
+    function spawnHeart(){
+      const h = document.createElement('div'); h.className='heart';
+      h.style.left = Math.random()*100+'vw';
+      h.style.animationDuration = 4+Math.random()*3+'s';
+      document.body.appendChild(h);
+      setTimeout(()=> h.remove(),8000);
+    }
+    setInterval(spawnHeart, 500);
+
+    // Cupido voando
+    function spawnCupido(){
+      const c = document.createElement('div'); c.className='cupido';
+      document.body.appendChild(c);
+      setTimeout(()=> c.remove(), 10000);
+    }
+    setInterval(spawnCupido, 15000);
+  </script>
+</body>
+</html>
